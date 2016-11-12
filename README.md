@@ -32,7 +32,7 @@ Find the version 9.6 to 10.x documentation on [the CA APM wiki at docops.ca.com.
 
 1. Extract the plug-in to <*EPAgent_Home*>\epaplugins.
 2. Configure the IntroscopeEPAgent.properties file in <*EPAgent_Home*> by adding these stateless plug-in properties:
-
+```
     introscope.epagent.plugins.stateless.names=DISKSTAT,SAR,PSWAS,VMSTAT,MPSTAT (can be appended to a previous entry)
     introscope.epagent.stateless.DISKSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelDiskStats.pl
     introscope.epagent.stateless.DISKSTAT.delayInSeconds=900
@@ -43,10 +43,10 @@ Find the version 9.6 to 10.x documentation on [the CA APM wiki at docops.ca.com.
     introscope.epagent.stateless.VMSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelVmStat.pl
     introscope.epagent.stateless.VMSTAT.delayInSeconds=900
     introscope.epagent.stateless.MPSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelMpStat.pl
-    introscope.epagent.stateless.MPSTAT.delayInSeconds=900
+    introscope.epagent.stateless.MPSTAT.delayInSeconds=900```
 
-3. The psWASforLinux.pl script requires that you know the tab location of the IBM WebSphere application name in the 'ps' output.
-Work with your IBM WebSphere administrator to standardize the property location to ensure consistent results. Adjust the value of '$psCommand' at program line 19.
+3. The psWASforLinux.pl script requires that you know the tab location of the IBM WebSphere application name in the `ps` output.
+Work with your IBM WebSphere administrator to standardize the property location to ensure consistent results. Adjust the value of `$psCommand` at program line 19.
 
 # Usage
 Start the EPAgent using the control script in the <*EPAgent_Home*>/bin directory.
