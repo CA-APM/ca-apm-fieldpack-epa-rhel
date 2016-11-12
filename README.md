@@ -26,9 +26,9 @@ Apache License, version 2.0. See [Licensing](https://www.apache.org/licenses/LIC
 # Prerequisite
 An installed and configured EPAgent.
 
-Find the version 9.6 to 10.x documentation on [the CA APM wiki at docops.ca.com.](https://docops.ca.com)
+Find the version 9.6 to 10.x documentation on [the CA APM documentation wiki.](https://docops.ca.com)
 
-# Plug-in Installation and Configuration
+# Install and Configure EPAgent Plug-ins for RHEL
 
 1. Extract the plug-in to <*EPAgent_Home*>\epaplugins.
 2. Configure the IntroscopeEPAgent.properties file in <*EPAgent_Home*> by adding these stateless plug-in properties:
@@ -48,10 +48,8 @@ Find the version 9.6 to 10.x documentation on [the CA APM wiki at docops.ca.com.
 3. The psWASforLinux.pl script requires that you know the tab location of the IBM WebSphere application name in the `ps` output.
 Work with your IBM WebSphere administrator to standardize the property location to ensure consistent results. Adjust the value of `$psCommand` at program line 19.
 
-# Usage
+# Use EPAgent Plug-ins for RHEL
 Start the EPAgent using the control script in the <*EPAgent_Home*>/bin directory.
-
-DiskStats, SAR, MPSTAT, and VMSTAT have no special instructions.
 
 # Debug and Troubleshoot
 Update the root logger in <*EPAgent_Home*>/IntroscopeEPAgent.properties from INFO to DEBUG, then save. No managed appklication restart needed.
