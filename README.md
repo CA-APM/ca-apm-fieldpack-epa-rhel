@@ -1,64 +1,83 @@
-# EPAgent Plugins for RHEL (1.2)
+# EPAgent Plug-ins for RHEL
 
-This is a series of plugins for monitoring both the OS and application processes (specifically WebSphere Application Server).
+The EPAgent Plug-ins for RHEL is a set of plug-ins for monitoring the Red Hat Enterprise Linux operating system and application processes (specifically IBM WebSphere Application Server).
 
-rhelDiskStats.pl - gathers I/O statistics for mount points.  
-rhelSar.pl - gathers per CPU/core statistics.  
-rhelVmStat.pl - gathers memory and some CPU statistics.  
-psWASforLinux.pl - gathers usage statistics from WebSphere processes.  
-rhelMpStat.pl - gathers per-processor statistics  
+* The rhelDiskStats.pl script gathers I/O statistics for mount points.
+* The rhelSar.pl script gathers per CPU/core statistics.
+* The rhelVmStat.pl script gathers memory and some CPU statistics.
+* The psWASforLinux.pl script gathers usage statistics from WebSphere processes.
+* The rhelMpStat.pl script gathers per-processor statistics.
 
+For installation instructions, see the README.md file.
+
+# Short Description
+The EPAgent Plug-ins for RHEL monitors the Red Hat Enterprise Linux (RHEL) operating system.
+
+# APM Version
 Tested with CA APM 9.7.1 EM, EPAgent 9.7.1, RHEL 6.x, and Perl 5.22.
 
-##Known Issues
-There have been discussions about the reporting of CPU statistics when running on System z | z/Linux. We are currently looking into alternatives to getting this information for your use.
+# Dependencies
+Tested with CA APM 9.7.1 EM, EPAgent 9.7.1, RHEL 6.x, and Perl 5.22.
 
-#Licensing
-FieldPacks are provided under the Apache License, version 2.0. See [Licensing](https://www.apache.org/licenses/LICENSE-2.0).
+# Licensing
+FApache License, version 2.0. See [Licensing](https://www.apache.org/licenses/LICENSE-2.0).
 
+# Prerequisite
+An installed and configured EPAgent.
 
-# Installation Instructions
+Find the version 9.6 to 10.x documentation on [the CA APM wiki at docops.ca.com.](https://docops.ca.com)
 
-Follow the instructions in the EPAgent guide to setup the agent.
+# Plug-in Installation and Configuration
 
-Add stateless plugin entries to \<epa_home\>/IntroscopeEPAgent.properties.
+1. Extract the plug-in to <*EPAgent_Home*>\epaplugins.
+2. Configure the IntroscopeEPAgent.properties file in <*EPAgent_Home*>.
+
+   * Add these stateless plug-in properties:
 
     introscope.epagent.plugins.stateless.names=DISKSTAT,SAR,PSWAS,VMSTAT,MPSTAT (can be appended to a previous entry)
-    introscope.epagent.stateless.DISKSTAT.command=perl <epa_home>/epaplugins/rhel/rhelDiskStats.pl
+    introscope.epagent.stateless.DISKSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelDiskStats.pl
     introscope.epagent.stateless.DISKSTAT.delayInSeconds=900
-    introscope.epagent.stateless.PSWAS.command=perl <epa_home>/epaplugins/rhel/psWASforLinux.pl
+    introscope.epagent.stateless.PSWAS.command=perl <*EPAgent_Home*>/epaplugins/rhel/psWASforLinux.pl
     introscope.epagent.stateless.PSWAS.delayInSeconds=900
-    introscope.epagent.stateless.SAR.command=perl <epa_home>/epaplugins/rhel/rhelSar.pl
+    introscope.epagent.stateless.SAR.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelSar.pl
     introscope.epagent.stateless.SAR.delayInSeconds=900
-    introscope.epagent.stateless.VMSTAT.command=perl <epa_home>/epaplugins/rhel/rhelVmStat.pl
+    introscope.epagent.stateless.VMSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelVmStat.pl
     introscope.epagent.stateless.VMSTAT.delayInSeconds=900
-    introscope.epagent.stateless.MPSTAT.command=perl <epa_home>/epaplugins/rhel/rhelMpStat.pl
+    introscope.epagent.stateless.MPSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelMpStat.pl
     introscope.epagent.stateless.MPSTAT.delayInSeconds=900
 
-# Usage Instructions
-No special instructions needed for DiskStats, SAR, MPSTAT, and VMSTAT.
+3. PSWAS requires that you know the tab location of the IBM WebSphere application name in the 'ps' output.
+Work with your IBM WebSphere administrator to standardize the property location to ensure consistent results. Adjust the value of '$psCommand' at line 19 of the program.
 
-PSWAS requires that you know the tab location of the WAS application name in the 'ps' output. It is recommended that you speak with your WAS administrator about standardizing the location of that property to ensure consistent results. Adjust the value of '$psCommand' at line 19 of the program.
+# Usage
+Start the EPAgent using the control script in the <*EPAgent_Home*>/bin directory.
 
-Start the EPAgent using the provided control script in \<epa_home\>/bin.
+DiskStats, SAR, MPSTAT, and VMSTAT have no special instructions.
 
-##How to debug and troubleshoot the field pack
-Update the root logger in \<epa_home\>/IntroscopeEPAgent.properties from INFO to DEBUG, then save. No need to restart the JVM.
-You can also manually execute the plugins from a console and use perl's built-in debugger.
+# Debug and Troubleshoot
+Update the root logger in <*EPAgent_Home*>/IntroscopeEPAgent.properties from INFO to DEBUG, then save. No managed appklication restart needed.
 
-##Disclaimer
-This document and associated tools are made available from CA Technologies as examples and provided at no charge as a courtesy to the CA APM Community at large. This resource may require modification for use in your environment. However, please note that this resource is not supported by CA Technologies, and inclusion in this site should not be construed to be an endorsement or recommendation by CA Technologies. These utilities are not covered by the CA Technologies software license agreement and there is no explicit or implied warranty from CA Technologies. They can be used and distributed freely amongst the CA APM Community, but not sold. As such, they are unsupported software, provided as is without warranty of any kind, express or implied, including but not limited to warranties of merchantability and fitness for a particular purpose. CA Technologies does not warrant that this resource will meet your requirements or that the operation of the resource will be uninterrupted or error free or that any defects will be corrected. The use of this resource implies that you understand and agree to the terms listed herein.
+You can also manually execute the plug-in from a console and use the PERL built-in debugger.
 
-Although these utilities are unsupported, please let us know if you have any problems or questions by adding a comment to the CA APM Community Site area where the resource is located, so that the Author(s) may attempt to address the issue or question.
+# Limitations
+There have been discussions about CPU statistics reporting when running on System z | z/Linux. We are monitoring this situation to provide you information as it becomes available.
 
-Unless explicitly stated otherwise this field pack is only supported on the same platforms as the APM core agent. See [APM Compatibility Guide](http://www.ca.com/us/support/ca-support-online/product-content/status/compatibility-matrix/application-performance-management-compatibility-guide.aspx).
+# Support
+This document and plug-in are made available from CA Technologies. They are provided as examples at no charge as a courtesy to the CA APM Community at large. This plug-in might require modification for use in your environment. However, this plug-in is not supported by CA Technologies, and inclusion in this site should not be construed to be an endorsement or recommendation by CA Technologies. This plug-in is not covered by the CA Technologies software license agreement and there is no explicit or implied warranty from CA Technologies. The plug-in can be used and distributed freely amongst the CA APM Community, but not sold. As such, it is unsupported software, provided as is without warranty of any kind, express or implied, including but not limited to warranties of merchantability and fitness for a particular purpose. CA Technologies does not warrant that this resource will meet your requirements or that the operation of the resource will be uninterrupted or error free or that any defects will be corrected. The use of this plug-in implies that you understand and agree to the terms listed herein.
+Although this plug-in is unsupported, please let us know if you have any problems or questions. You can add comments to the CA APM Community site so that the author(s) can attempt to address the issue or question.
+Unless explicitly stated otherwise this plug-in is only supported on the same platforms as the CA APM Java agent.
 
+# Support URL
+https://github.com/htdavis/ca-apm-fieldpack-epa-rhel
 
-# Change log
-Changes for each version of the field pack.
+# Product Compatibilty Matrix
+http://pcm.ca.com/
+
+# Change Log
+Changes for each plug-in version.
 
 Version | Author | Comment
 --------|--------|--------
-1.0 | Hiko Davis | First bundled version of the field packs.
-1.1 | Hiko Davis | Added MPSTAT plugin.
+1.0 | Hiko Davis | First version of the plug-in.
+1.1 | Hiko Davis | Added MPSTAT plug-in.
 1.2 | Hiko Davis | Updated rhelDiskStats.pl to handle blank line in iostat output.
