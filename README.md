@@ -43,8 +43,8 @@ Find the version 9.6 to 10.x documentation on [the CA APM wiki at docops.ca.com.
     introscope.epagent.stateless.VMSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelVmStat.pl
     introscope.epagent.stateless.VMSTAT.delayInSeconds=900
     introscope.epagent.stateless.MPSTAT.command=perl <*EPAgent_Home*>/epaplugins/rhel/rhelMpStat.pl
-    introscope.epagent.stateless.MPSTAT.delayInSeconds=900```
-
+    introscope.epagent.stateless.MPSTAT.delayInSeconds=900
+```
 3. The psWASforLinux.pl script requires that you know the tab location of the IBM WebSphere application name in the `ps` output.
 Work with your IBM WebSphere administrator to standardize the property location to ensure consistent results. Adjust the value of `$psCommand` at program line 19.
 
