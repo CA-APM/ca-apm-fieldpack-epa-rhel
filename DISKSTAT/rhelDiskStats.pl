@@ -80,6 +80,7 @@ if ( scalar(@ARGV) > 0 ) {
 
 my ($iostatCommand, @iostatResults);
 my ($dfCommand, @dfResults);
+my ($inodesCommand, @inodesResults);
 
 if ( $debug ) {
     # use here-docs for command results
@@ -112,6 +113,23 @@ Filesystem           1K-blocks      Used Available Use% Mounted on
 tmpfs                  2987952         0   2987952   0% /dev/shm
 EOF
 
+    @inodesResults = <<"EOF" =~ m/(^.*\n)/mg;
+Filesystem            Inodes   IUsed   IFree IUse% Mounted on
+/dev/mapper/VolGroup00-LogVol00
+                      532576    8708  523868    2% /
+/dev/mapper/VolGroup00-lv_opt
+                     1048576  127869  920707   13% /opt
+/dev/mapper/VolGroup00-lv_var
+                      524288    1565  522723    1% /var
+/dev/mapper/VolGroup00-lv_home
+                      532576    8644  523932    2% /home
+/dev/mapper/VolGroup00-lv_usr
+                      524288    7408  516880    2% /usr
+/dev/mapper/VolGroup00-lv_audit
+                     2916352      39 2916313    1% /audit
+/dev/sda1              26104      49   26055    1% /boot
+tmpfs                8233426       1 8233425    1% /dev/shm
+EOF
 } else {
     # iostat command for Linux disks
     $iostatCommand = 'iostat -d';
@@ -121,6 +139,10 @@ EOF
     $dfCommand = 'df -k';
     # Get the disk stats
     @dfResults = `$dfCommand`;
+    # inodes command
+    $inodesCommand = 'df -i';
+    # Get inodes
+    @inodesResults = `$inodesCommand`;
 }
 
 
@@ -129,6 +151,9 @@ for my $l ( 3..$#iostatResults ) {
     my @deviceStats = split (/\s+/, $iostatResults[$l]);
     my $deviceName = $deviceStats[0];
 
+    # if last line is blank, exit for loop
+    last if (!defined($deviceName));
+    
     # if the user specified this device on the command line.
     next if $deviceName !~ /$mountedDisksRegEx/i;
 
@@ -137,31 +162,31 @@ for my $l ( 3..$#iostatResults ) {
                                     resource    => 'Device',
                                     subresource => $deviceName,
                                     name        => 'Blk_wrtn',
-                                    value       => int ($deviceStats[5]),
+                                    value       => $deviceStats[5],
                                   );
     Wily::PrintMetric::printMetric( type        => 'IntCounter',
                                     resource    => 'Device',
                                     subresource => $deviceName,
                                     name        => 'Blk_read',
-                                    value       => int ($deviceStats[4]),
+                                    value       => $deviceStats[4],
                                   );
     Wily::PrintMetric::printMetric( type        => 'IntCounter',
                                     resource    => 'Device',
                                     subresource => $deviceName,
                                     name        => 'Blk_wrtn/s',
-                                    value       => int ($deviceStats[3]),
+                                    value       => sprintf("%.0f", $deviceStats[3]),
                                   );
     Wily::PrintMetric::printMetric( type        => 'IntCounter',
                                     resource    => 'Device',
                                     subresource => $deviceName,
                                     name        => 'Blk_read/s',
-                                    value       => int ($deviceStats[2]),
+                                    value       => sprintf("%.0f", $deviceStats[2]),
                                   );
     Wily::PrintMetric::printMetric( type        => 'IntCounter',
                                     resource    => 'Device',
                                     subresource => $deviceName,
                                     name        => 'tps',
-                                    value       => int ($deviceStats[1]),
+                                    value       => sprintf("%.0f", $deviceStats[1]),
                                   );
 }
 
@@ -226,5 +251,68 @@ for my $i ( 1..$#dfResults ) {
                                         value       => $dfStats[0],
                                       );
     }
-$h=0;
+    $h=0;
+}
+
+my $n=0;
+my @holdVal2;
+for my $i ( 1..$#inodesResults ) {
+    chomp $inodesResults[$i]; # remove trailing new line
+    my @inStats = split (/\s+/, $inodesResults[$i]);
+    my $fsName = $inStats[0];
+    my $diskName = $inStats[5];
+
+    # if line is just the filesystem, hold until next loop
+    if ( not defined $diskName ) {
+        $holdVal2[$i] = $fsName;
+        $n++;
+        next;
+    }
+
+    # check to see if the user specified this disk on the command line
+    next if $diskName !~ /$mountedDisksRegEx/i;
+
+    # report the inodes stats
+    # chop gets rid of '%' in the percentage metric
+    chop $inStats[4];
+    Wily::PrintMetric::printMetric( type        => 'IntCounter',
+                                    resource    => 'Disk',
+                                    subresource => $diskName,
+                                    name        => 'IUse (%)',
+                                    value       => $inStats[4],
+                                  );
+    Wily::PrintMetric::printMetric( type        => 'IntCounter',
+                                    resource    => 'Disk',
+                                    subresource => $diskName,
+                                    name        => 'IFree',
+                                    value       => $inStats[3],
+                                  );
+    Wily::PrintMetric::printMetric( type        => 'IntCounter',
+                                    resource    => 'Disk',
+                                    subresource => $diskName,
+                                    name        => 'IUsed',
+                                    value       => $inStats[2],
+                                  );
+    Wily::PrintMetric::printMetric( type        => 'IntCounter',
+                                    resource    => 'Disk',
+                                    subresource => $diskName,
+                                    name        => 'Inodes',
+                                    value       => $inStats[1],
+                                  );
+    if ($n >= 1) {
+        Wily::PrintMetric::printMetric( type        => 'StringEvent',
+                                        resource    => 'Disk',
+                                        subresource => $diskName,
+                                        name        => 'Filesystem',
+                                        value       => $holdVal2[$i - 1],
+                                      );
+    } else {
+        Wily::PrintMetric::printMetric( type        => 'StringEvent',
+                                        resource    => 'Disk',
+                                        subresource => $diskName,
+                                        name        => 'Filesystem',
+                                        value       => $inStats[0],
+                                      );
+    }
+    $n=0;
 }
