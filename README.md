@@ -9,7 +9,8 @@ EPAgent Plug-ins for RHEL provides these plug-in scripts:
 * The psWASforLinux.pl script gathers usage statistics from WebSphere processes.
 * The rhelMpStat.pl script gathers per-processor statistics.
 
-For installation instructions, see the README.md file.
+## Dependencies
+Tested with CA APM 9.7.1 EM, EPAgent 9.7.1, and Perl 5.22.
 
 # Short Description
 The EPAgent Plug-ins for RHEL monitors the Red Hat Enterprise Linux (RHEL) operating system.
@@ -78,3 +79,13 @@ Version | Author | Comment
 1.0 | Hiko Davis | First version of the plug-in.
 1.1 | Hiko Davis | Added MPSTAT plug-in.
 1.2 | Hiko Davis | Updated rhelDiskStats.pl to handle blank line in iostat output.
+
+## Support URL
+https://github.com/htdavis/ca-apm-fieldpack-epa-rhel
+
+## Short Description
+Monitor RHEL OS
+
+## Categories
+Server Monitoring
+
